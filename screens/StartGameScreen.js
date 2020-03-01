@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, TextInput, Button, TouchableWithoutFeedback, Ke
 
 import Card from './../components/Card';
 import Input from './../components/Input';
+import BodyText from './../components/BodyText';
 import NumberContainer from './../components/NumberContainer';
+import MainButton from './../components/MainButton';
 import Colors from '../constants/colors';
 
 const StartGameScreen = props => {
@@ -39,7 +41,8 @@ const StartGameScreen = props => {
         confirmedOutput = <Card style={styles.summaryContainer}>
             <Text>You selected</Text>
             <NumberContainer>{selectedNumber}</NumberContainer>
-            <Button title="START GAME" onPress={() => props.onStartGame(selectedNumber)} />
+            <MainButton onPress={() => props.onStartGame(selectedNumber)}>START GAME</MainButton>
+            {/* <Button title="START GAME" onPress={() => props.onStartGame(selectedNumber)} /> */}
         </Card>
     }
 
@@ -51,7 +54,7 @@ const StartGameScreen = props => {
                 <Text style={styles.title}>Start a New Game</Text>
                 <Card style={styles.inputContainer}>
                     <View style={styles.inputContainer}>
-                        <Text>Select a Number</Text>
+                        <BodyText>Select a Number</BodyText>
                         <Input style={styles.input} blureOnSubmit autoCapitalize='none' autoCorrect={false}
                             keyboardType='numeric'
                             maxLength={2}
