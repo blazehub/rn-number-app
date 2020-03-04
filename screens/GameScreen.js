@@ -24,6 +24,8 @@ const GameScreen = props => {
     const intialGuess = generateRandomBetween(1, 100, props.userChoice);
     const [currentGuess, setCurrentGuess] = useState(intialGuess);
     const [pastGuesses, setPastGuesses] = useState([intialGuess]);
+    const [availableDeviceWidth, setAvailableDeviceWidth] = useState([Dimensions.get('window').width]);
+    const [availableDeviceHeight, setAvailableDeviceHeight] = useState([Dimensions.get('window').height]);
 
     const currentLow = useRef(1);
     const currentHigh = useRef(100);
@@ -35,6 +37,14 @@ const GameScreen = props => {
             onGameOver(pastGuesses.length);
         }
     }, [currentGuess, userChoice, onGameOver]);
+
+    useEffect(() => {
+        const updateLayout = () => {
+            setAvailableDeviceHeight(Dimensions.get('window').height);
+            setAvailableDeviceWidth(Dimensions.get('window').width);
+        };
+        Dimensions.addEventListener('change', updateLayout);
+    });
 
     const nextGuessHandler = (direction) => {
         if ((direction === 'lower' && currentGuess < userChoice) || (direction === 'greater') && currentGuess > userChoice) {
@@ -60,6 +70,30 @@ const GameScreen = props => {
             <Text style={defaultStyles.bodyText}>{value}</Text>
         </View>
     );
+
+    if (availableDeviceHeight < 500) {
+        return (
+            <View style={styles.screen}>
+                <Text>Opponent's Guess</Text>
+                <View style={styles.controls}>
+                    <MainButton onPress={nextGuessHandler.bind(this, 'lower')}>
+                        <Ionicons name="md-remove" size={24} color='white'></Ionicons>
+                    </MainButton>
+                    <NumberContainer>{currentGuess}</NumberContainer>
+                    <MainButton onPress={nextGuessHandler.bind(this, 'greater')}>
+                        <Ionicons name="md-add" size={24} color='white'></Ionicons>
+                    </MainButton>
+                    {/* <Button title="LOWER" onPress={nextGuessHandler.bind(this, 'lower')} />
+                <Button title="GREATER" onPress={nextGuessHandler.bind(this, 'greater')} /> */}
+                </View>
+                <View style={styles.listContainer}>
+                    <ScrollView contentContainerStyle={styles.list}>
+                        {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+                    </ScrollView>
+                </View>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.screen}>
@@ -96,6 +130,13 @@ const styles = StyleSheet.create({
         marginTop: Dimensions.get('window').height > 600 ? 20 : 5,
         width: 400,
         maxWidth: '90%'
+    },
+    controls: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '50%',
+        alignItems: 'center',
+        marginTop: 10
     },
     listContainer: {
         width: Dimensions.get('window').width > 350 ? '60%' : '80%',
